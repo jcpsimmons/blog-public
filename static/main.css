@@ -41,6 +41,11 @@ body {
   font-weight: normal;
 }
 
+.offbit-medium {
+  font-family: 'Offbit';
+  font-weight: normal;
+}
+
 /* Using bold and medium variants for Manrope */
 b,
 strong {
@@ -62,8 +67,6 @@ h5,
 h6 {
   font-family: 'Offbit', sans-serif;
   font-weight: bold;
-  line-height: 1.2;
-  margin-bottom: 0.5em;
 }
 
 h1 {
@@ -90,29 +93,15 @@ h6 {
   font-size: 1em; /* Same size as large body text, used for very minor headers */
 }
 
-header h1 {
-  font-size: 1em;
-  font-weight: normal;
-  line-height: 0;
-}
-
-header a {
-  text-decoration: none;
-  color: rgb(239, 241, 255);
-}
-
-header a:visited {
-  color: rgb(239, 241, 255);
-}
-
 header div {
-  padding: 0;
-  background: rgb(14, 15, 15);
-  display: inline-block;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 1em;
 }
 
-header div:hover {
-  background: rgb(239, 241, 255);
+header h3 {
+  line-height: 0;
 }
 
 a {
@@ -171,23 +160,15 @@ pre {
   padding: 0;
 }
 
-#Home ul li {
-  margin: 0.5em 0;
+#Home ul li * {
+  margin: 0 0 0.5em 0;
+  font-size: 1.25em;
 }
 
 /* Dark Mode and Color Preferences */
 @media (prefers-color-scheme: dark) {
-  header a {
-    text-decoration: none;
-    color: #222834;
-  }
-
-  header a:visited {
-    color: #222834;
-  }
-
   body {
-    background-color: #212735; /* Bluish tint for dark mode */
+    background-color: #14171f; /* Bluish tint for dark mode */
     color: #e1e2f4; /* Bluish tint for text */
   }
 
@@ -202,10 +183,6 @@ pre {
 
   a:hover {
     color: #ccc;
-  }
-
-  header div {
-    background: #e1e2f4; /* Inverted background */
   }
 
   nav {

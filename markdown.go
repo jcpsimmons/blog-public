@@ -1,16 +1,16 @@
-package essay
+package main
 
 import (
 	"embed"
-	"fmt"
+	"log"
 	"sort"
 	"strings"
 
 	"github.com/russross/blackfriday/v2"
 )
 
-//go:embed *.md
-var essayFiles embed.FS
+//go:embed **/*.md
+var files embed.FS
 
 func FileNameToTitle(fileName string) string {
 	humanReadableName := strings.Split(fileName, ".")[0]
@@ -20,7 +20,7 @@ func FileNameToTitle(fileName string) string {
 }
 
 func GetAllEssaysAsListItems() ([]string, error) {
-	files, err := essayFiles.ReadDir(".")
+	files, err := files.ReadDir("essay")
 	if err != nil {
 		return nil, err
 	}
@@ -35,17 +35,17 @@ func GetAllEssaysAsListItems() ([]string, error) {
 		humanReadableName := FileNameToTitle(fileName)
 		if strings.HasSuffix(fileName, ".md") {
 			// wrap in <a> and <li> tags
-			htmlFileName := "<li><a href=\"/essay/" + fileName[:len(fileName)-3] + "\">" + humanReadableName + "</a></li>"
+			htmlFileName := "<li><p class='offbit-medium'><a href=\"/essay/" + fileName[:len(fileName)-3] + "\">" + humanReadableName + "</p></a></li>"
 			fileNames = append(fileNames, htmlFileName)
 		}
 	}
 	return fileNames, nil
 }
 
-func GetEssay(fileName string) ([]byte, error) {
-	fmt.Println("fileName:", fileName)
+func GetMarkdown(fileName string) ([]byte, error) {
+	log.Println("fileName:", fileName)
 
-	post, err := essayFiles.ReadFile(fileName)
+	post, err := files.ReadFile(fileName)
 	if err != nil {
 		return nil, err
 	}
