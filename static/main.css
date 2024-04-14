@@ -1,0 +1,247 @@
+/* Importing Manrope fonts */
+@font-face {
+  font-family: 'Manrope';
+  src: url('/static/fonts/manrope-bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Manrope';
+  src: url('/static/fonts/manrope-medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Importing Monument Grotesk Mono */
+@font-face {
+  font-family: 'MG-mono';
+  src: url('/static/fonts/monument-grotesk-mono.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Importing Offbit for headers */
+@font-face {
+  font-family: 'Offbit';
+  src: url('/static/fonts/offbit-bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Offbit';
+  src: url('/static/fonts/offbit-medium.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Manrope', sans-serif;
+  font-weight: normal;
+}
+
+/* Using bold and medium variants for Manrope */
+b,
+strong {
+  font-family: 'Manrope';
+  font-weight: bold;
+}
+
+/* Monument Grotesk Mono for <pre> tags */
+pre {
+  font-family: 'MG-mono', monospace;
+}
+
+/* Offbit for headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Offbit', sans-serif;
+  font-weight: bold;
+  line-height: 1.2;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  font-size: 3em; /* Largest heading, very prominent */
+}
+
+h2 {
+  font-size: 2.25em; /* Noticeably smaller than h1 but still quite large */
+}
+
+h3 {
+  font-size: 1.75em; /* Medium-large, suitable for sub-section titles */
+}
+
+h4 {
+  font-size: 1.5em; /* Medium size, good for smaller section headers */
+}
+
+h5 {
+  font-size: 1.25em; /* Slightly larger than normal text, for minor sections */
+}
+
+h6 {
+  font-size: 1em; /* Same size as large body text, used for very minor headers */
+}
+
+header h1 {
+  font-size: 1em;
+  font-weight: normal;
+  line-height: 0;
+}
+
+header a {
+  text-decoration: none;
+  color: rgb(239, 241, 255);
+}
+
+header a:visited {
+  color: rgb(239, 241, 255);
+}
+
+header div {
+  padding: 0;
+  background: rgb(14, 15, 15);
+  display: inline-block;
+}
+
+header div:hover {
+  background: rgb(239, 241, 255);
+}
+
+a {
+  color: inherit;
+}
+
+a:hover {
+  border: 3px solid red;
+}
+
+a:visited:hover {
+  color: black;
+}
+
+a:visited {
+  color: black;
+}
+
+html {
+  font-size: 20px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+main section {
+  max-width: 50ch;
+  padding: 1em;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  margin: 1em 0;
+}
+
+nav ul {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+}
+
+nav ul li {
+  margin: 0 1em;
+}
+
+pre {
+  overflow-x: scroll;
+}
+
+#Home ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#Home ul li {
+  margin: 0.5em 0;
+}
+
+/* Dark Mode and Color Preferences */
+@media (prefers-color-scheme: dark) {
+  header a {
+    text-decoration: none;
+    color: #222834;
+  }
+
+  header a:visited {
+    color: #222834;
+  }
+
+  body {
+    background-color: #212735; /* Bluish tint for dark mode */
+    color: #e1e2f4; /* Bluish tint for text */
+  }
+
+  a,
+  a:visited {
+    color: #e1e2f4; /* Consistent link color */
+  }
+
+  a:visited:hover {
+    color: #e1e2f4; /* Consistent link color */
+  }
+
+  a:hover {
+    color: #ccc;
+  }
+
+  header div {
+    background: #e1e2f4; /* Inverted background */
+  }
+
+  nav {
+    background-color: #2a2f3a; /* Bluish tint for navigation bar */
+  }
+
+  nav ul li:hover {
+    color: #ccc;
+  }
+}
+
+/* mobile screens */
+@media (max-width: 600px) {
+  html {
+    font-size: 16px;
+  }
+  main section {
+    padding: 0.5em;
+  }
+
+  h1 {
+    font-size: 2.5em;
+  }
+  h2 {
+    font-size: 2em;
+  }
+  h3 {
+    font-size: 1.75em;
+  }
+  h4 {
+    font-size: 1.5em;
+  }
+  h5 {
+    font-size: 1.25em;
+  }
+  h6 {
+    font-size: 1em;
+  }
+}
