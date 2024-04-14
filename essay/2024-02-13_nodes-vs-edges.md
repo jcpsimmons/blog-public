@@ -1,8 +1,3 @@
----
-title: "Node People vs. Edge People"
-published_at: 2024-02-13
----
-
 Over the course of my study and career, I've come to realize that people largely
 fall into one of two groups of thinkers - they're either node people or edge
 people. With most dichotomies, there is usually a huge amount of grey area. This
