@@ -1,4 +1,4 @@
-module github.com/jcpsimmons/glog
+module github.com/jcpsimmons/blog-public
 
 go 1.22.1
 

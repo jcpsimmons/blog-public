@@ -8,7 +8,7 @@ import (
 
 	"net/http"
 
-	"github.com/jcpsimmons/glog/template"
+	"github.com/jcpsimmons/blog-public/template"
 )
 
 //go:embed static
