@@ -2,96 +2,120 @@ package main
 
 import (
 	"embed"
-	"log"
+	"html/template"
+	"io"
 	"os"
 	"strings"
 
 	"net/http"
 
-	"github.com/jcpsimmons/jcsblog/template"
+	"github.com/labstack/echo"
 )
 
 //go:embed static
 var staticFiles embed.FS
 
-func essayHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("essayHandler on path:", r.URL.Path)
-	fileName := strings.TrimPrefix(r.URL.Path, "/essay/") + ".md"
-	post, err := GetMarkdown("essay/" + fileName)
-
-	if err != nil || string(post) == "" {
-		log.Println("Error getting markdown:", err)
-		http.Error(w, "Not found", http.StatusNotFound)
-		return
-	}
-
-	title := FileNameToTitle(string(fileName))
-	pageName := title + " - The Blog Dr. Josh C. Simmons"
-	formattedPost, err := template.SiteFrameWrap(title, string(post), pageName, "Essay")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Write(formattedPost)
+type Template struct {
+	templates *template.Template
 }
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("homeHandler on path:", r.URL.Path)
+type PageData struct {
+	PageTitle string
+	PageID    string
+	Heading   string
+	Content   template.HTML
+}
+
+func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	if err := t.templates.ExecuteTemplate(w, name, data); err != nil {
+		c.Logger().Error(err)
+		return err
+	}
+	return nil
+}
+
+// func essayHandler(c echo.Context) error {
+// 	essayName := c.Param("essay")
+// 	fileName := essayName + ".md"
+// 	post, err := GetMarkdown("essay/" + fileName)
+
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	title := FileNameToTitle(string(fileName))
+// 	pageName := title + " - The Blog Dr. Josh C. Simmons"
+// 	essayPageData := map[string]interface{}{
+// 		"PageName":    pageName,
+// 		"BodyID":      "Essay",
+// 		"PageTitle":   title,
+// 		"PageContent": string(post),
+// 	}
+
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return c.Render(http.StatusOK, "site-frame.html", essayPageData)
+// }
+
+func Home(c echo.Context) error {
 	posts, err := GetAllEssaysAsListItems()
 
-	if err != nil || r.URL.Path != "/" {
-		http.Error(w, "not found", http.StatusNotFound)
-		return
+	if err != nil {
+		return err
 	}
 	allPosts := "<ul>" + strings.Join(posts, "") + "</ul>"
 
-	formattedPost, err := template.SiteFrameWrap("Essays", string(allPosts), "The Blog of Dr. Josh C. Simmons", "Home")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	data := PageData{
+		PageTitle: "The Blog of Dr. Josh C. Simmons",
+		PageID:    "Home",
+		Heading:   "Essays",
+		Content:   template.HTML(allPosts),
 	}
-	w.Write(formattedPost)
+
+	return c.Render(http.StatusOK, "default", data)
 }
 
-func aboutHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("aboutHandler on path:", r.URL.Path)
+// func aboutHandler(c echo.Context) error {
+// 	fileName := "single-pages/about.md"
+// 	post, err := GetMarkdown(fileName)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	fileName := "single-pages/about.md"
-	post, err := GetMarkdown(fileName)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
+// 	title := "About"
+// 	pageName := "About - The Blog Dr. Josh C. Simmons"
+// 	formattedPost, err := blogtemplate.SiteFrameWrap(title, string(post), pageName, "Essay")
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return c.HTML(http.StatusOK, string(formattedPost))
+// }
 
-	title := "About"
-	pageName := "About - The Blog Dr. Josh C. Simmons"
-	formattedPost, err := template.SiteFrameWrap(title, string(post), pageName, "Essay")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Write(formattedPost)
+func Hello(c echo.Context) error {
+	return c.Render(http.StatusOK, "default", map[string]interface{}{
+		"name": "Josh",
+		"test": string(c.Param("count")),
+	})
 }
 
 func main() {
-	log.Println("Starting server...")
+	e := echo.New()
 
-	log.Println("Getting port...")
+	t := &Template{
+		templates: template.Must(template.ParseGlob("./templates/*.html")),
+	}
+	e.Renderer = t
+
+	e.GET("/", Home)
+	// e.GET("/about", aboutHandler)
+	// e.GET("/essay/:essay", essayHandler)
+	e.Static("/static", "static")
+
 	port := "4000"
 	if os.Getenv("PORT") != "" {
 		port = os.Getenv("PORT")
 	}
 	port = ":" + port
-
-	log.Println("Listening on port", port)
-
-	http.Handle("/static/", http.FileServer(http.FS(staticFiles)))
-	http.HandleFunc("/essay/", essayHandler)
-	http.HandleFunc("/about", aboutHandler)
-	http.HandleFunc("/", homeHandler)
-
-	err := http.ListenAndServe(port, nil)
-	if err != nil {
-		log.Println("ListenAndServe:", err)
-	}
+	e.Logger.Fatal(e.Start(port))
 }
