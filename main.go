@@ -23,6 +23,9 @@ import (
 //go:embed static
 var staticFiles embed.FS
 
+//go:embed templates
+var templates embed.FS
+
 type Template struct {
 	templates *template.Template
 }
