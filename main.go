@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"embed"
 	"html/template"
 	"io"
@@ -12,7 +13,11 @@ import (
 
 	"net/http"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
+	"golang.org/x/crypto/acme"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 //go:embed static
@@ -98,6 +103,9 @@ func About(c echo.Context) error {
 
 func main() {
 	e := echo.New()
+	e.Logger.SetLevel(log.INFO)
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
 
 	t := &Template{
 		templates: template.Must(template.ParseGlob("./templates/*.html")),
@@ -110,22 +118,42 @@ func main() {
 
 	e.Static("/static", "static")
 
-	port := "4000"
-	if os.Getenv("PORT") != "" {
-		port = os.Getenv("PORT")
-	}
-	port = ":" + port
-
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
-	// Start server
+
 	go func() {
-		if err := e.Start(port); err != nil && err != http.ErrServerClosed {
-			e.Logger.Fatal("shutting down the server")
+		// check for --dev flag
+		if len(os.Args) > 1 && os.Args[1] == "--dev" {
+			e.Logger.Fatal(e.Start(":4000"))
+
+		} else {
+
+			// redirect http to https
+			e.Pre(middleware.HTTPSRedirect())
+			// redirect www to non-www
+			e.Pre(middleware.HTTPSNonWWWRedirect())
+			autoTLSManager := autocert.Manager{
+				Prompt: autocert.AcceptTOS,
+				// Cache certificates to avoid issues with rate limits (https://letsencrypt.org/docs/rate-limits)
+				Cache: autocert.DirCache("/var/www/.cache"),
+				//HostPolicy: autocert.HostWhitelist("<DOMAIN>"),
+			}
+			s := http.Server{
+				Addr:    ":443",
+				Handler: e, // set Echo as handler
+				TLSConfig: &tls.Config{
+					//Certificates: nil, // <-- s.ListenAndServeTLS will populate this field
+					GetCertificate: autoTLSManager.GetCertificate,
+					NextProtos:     []string{acme.ALPNProto},
+				},
+				//ReadTimeout: 30 * time.Second, // use custom timeouts
+			}
+			if err := s.ListenAndServeTLS("", ""); err != http.ErrServerClosed {
+				e.Logger.Fatal(err)
+			}
 		}
 	}()
 
-	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
 	<-ctx.Done()
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
