@@ -1,0 +1,13 @@
+[Unit]
+Description=The blog of Dr. Josh C. Simmons
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/jcsblog
+Restart=on-failure
+User=nobody
+Group=nogroup
+
+[Install]
+WantedBy=multi-user.target
