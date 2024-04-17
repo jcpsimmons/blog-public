@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"html/template"
 	"io"
 	"os"
+	"os/signal"
 	"strings"
+	"time"
 
 	"net/http"
 
@@ -18,7 +21,6 @@ var staticFiles embed.FS
 type Template struct {
 	templates *template.Template
 }
-
 type PageData struct {
 	PageTitle string
 	PageID    string
@@ -34,29 +36,27 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	return nil
 }
 
-// func essayHandler(c echo.Context) error {
-// 	essayName := c.Param("essay")
-// 	fileName := essayName + ".md"
-// 	post, err := GetMarkdown("essay/" + fileName)
+func Essay(c echo.Context) error {
+	essayName := c.Param("essay")
+	c.Logger().Info("Reading essay: ", essayName)
+	fileName := essayName + ".md"
+	post, err := GetMarkdown("essay/" + fileName)
+	c.Logger().Info("Reading file: ", fileName)
+	if err != nil {
+		return err
+	}
 
-// 	if err != nil {
-// 		return err
-// 	}
+	title := FileNameToTitle(string(fileName))
+	pageTitle := title + " - The Blog Dr. Josh C. Simmons"
 
-// 	title := FileNameToTitle(string(fileName))
-// 	pageName := title + " - The Blog Dr. Josh C. Simmons"
-// 	essayPageData := map[string]interface{}{
-// 		"PageName":    pageName,
-// 		"BodyID":      "Essay",
-// 		"PageTitle":   title,
-// 		"PageContent": string(post),
-// 	}
-
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return c.Render(http.StatusOK, "site-frame.html", essayPageData)
-// }
+	data := PageData{
+		PageTitle: pageTitle,
+		PageID:    "Essay",
+		Heading:   title,
+		Content:   template.HTML(post),
+	}
+	return c.Render(http.StatusOK, "default", data)
+}
 
 func Home(c echo.Context) error {
 	posts, err := GetAllEssaysAsListItems()
@@ -76,27 +76,24 @@ func Home(c echo.Context) error {
 	return c.Render(http.StatusOK, "default", data)
 }
 
-// func aboutHandler(c echo.Context) error {
-// 	fileName := "single-pages/about.md"
-// 	post, err := GetMarkdown(fileName)
-// 	if err != nil {
-// 		return err
-// 	}
+func About(c echo.Context) error {
+	fileName := "single-pages/about.md"
+	aboutText, err := GetMarkdown(fileName)
+	if err != nil {
+		return err
+	}
 
-// 	title := "About"
-// 	pageName := "About - The Blog Dr. Josh C. Simmons"
-// 	formattedPost, err := blogtemplate.SiteFrameWrap(title, string(post), pageName, "Essay")
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return c.HTML(http.StatusOK, string(formattedPost))
-// }
+	heading := "About"
+	pageTitle := "About - The Blog Dr. Josh C. Simmons"
 
-func Hello(c echo.Context) error {
-	return c.Render(http.StatusOK, "default", map[string]interface{}{
-		"name": "Josh",
-		"test": string(c.Param("count")),
-	})
+	data := PageData{
+		PageTitle: pageTitle,
+		PageID:    "Home",
+		Heading:   heading,
+		Content:   template.HTML(aboutText),
+	}
+	return c.Render(http.StatusOK, "default", data)
+
 }
 
 func main() {
@@ -108,8 +105,9 @@ func main() {
 	e.Renderer = t
 
 	e.GET("/", Home)
-	// e.GET("/about", aboutHandler)
-	// e.GET("/essay/:essay", essayHandler)
+	e.GET("/about", About)
+	e.GET("/essay/:essay", Essay)
+
 	e.Static("/static", "static")
 
 	port := "4000"
@@ -117,5 +115,21 @@ func main() {
 		port = os.Getenv("PORT")
 	}
 	port = ":" + port
-	e.Logger.Fatal(e.Start(port))
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+	// Start server
+	go func() {
+		if err := e.Start(port); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal("shutting down the server")
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
+	<-ctx.Done()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
+	}
 }
