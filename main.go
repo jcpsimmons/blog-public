@@ -111,7 +111,7 @@ func main() {
 	e.Use(middleware.Logger())
 
 	t := &Template{
-		templates: template.Must(template.ParseGlob("./templates/*.html")),
+		templates: template.Must(template.ParseFS(templateFiles, "templates/*.html")),
 	}
 	e.Renderer = t
 
