@@ -96,7 +96,7 @@ func About(c echo.Context) error {
 
 	data := PageData{
 		PageTitle: pageTitle,
-		PageID:    "Home",
+		PageID:    "About",
 		Heading:   heading,
 		Content:   template.HTML(aboutText),
 	}
