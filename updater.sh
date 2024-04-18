@@ -1,7 +1,15 @@
 #!/bin/bash
 
-# check if there are any updates on github, pull and restart the server
+#  The script is pretty straightforward. It checks if there are any updates on the remote repository, pulls the updates, builds the binary, and restarts the server.
+#  The script is scheduled to run every 5 minutes using a cron job.
+#  # Path: /etc/cron.d/jcsblog
+# */5 * * * * root /usr/local/bin/updater.sh
+
+#  The script also logs the update process using the  logger  command.
+#  # Path: /etc/rsyslog.d/jcsblog.conf
+
 git fetch origin
+
 if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     # update syslog
     logger -t jcsblogupdater "Updating jcsblog"
@@ -19,4 +27,6 @@ if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     tmux new-session -d -s persistent-server
     tmux send-keys -t persistent-server:0.0 "/usr/local/bin/jcsblog" Enter
     logger -t jcsblogupdater "jcsblog updated and restarted"
+else
+    logger -t jcsblogupdater "No updates found"
 fi
