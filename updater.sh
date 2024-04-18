@@ -1,13 +1,10 @@
 #!/bin/bash
 
-# Check if directory argument is provided
-if [ "$1" == "" ]; then
-    echo "Error: No directory provided. Usage: $0 <directory>"
-    exit 1
-fi
+# Determine the directory where the script is located
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
-# Change directory to the provided path
-cd "$1" || exit
+# Change to the directory of the script
+cd "$SCRIPT_DIR" || exit
 
 # Fetch latest changes from the origin
 git fetch origin
