@@ -10,7 +10,6 @@ I rewrite the codebase for this blog obsessively. This iteration was built with 
 
 - NextJS
 - Hugo
-- Hexo
 - Raw HTML and CSS (based)
 - React, integrating with Ethereum blockchain as a DAPP
 - Python/Django/SQLite
