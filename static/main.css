@@ -100,16 +100,17 @@ header div {
   padding: 0 1em;
 }
 
-header h3 {
-  line-height: 0;
-}
-
 a {
   color: inherit;
+  border: 3px solid transparent;
 }
 
 a:hover {
-  border: 3px solid red;
+  border-color: greenyellow;
+}
+
+a:active {
+  border-color: green;
 }
 
 a:visited:hover {
@@ -165,6 +166,10 @@ pre {
   font-size: 1.25em;
 }
 
+div#Content {
+  padding-bottom: 5em;
+}
+
 /* Dark Mode and Color Preferences */
 @media (prefers-color-scheme: dark) {
   body {
@@ -194,6 +199,14 @@ pre {
   }
 }
 
+header {
+  background-color: #2a2f3a;
+}
+
+header a {
+  color: #e1e2f4 !important;
+}
+
 /* mobile screens */
 @media (max-width: 600px) {
   html {
@@ -220,5 +233,8 @@ pre {
   }
   h6 {
     font-size: 1em;
+  }
+  header {
+    font-size: 0.75em;
   }
 }
