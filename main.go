@@ -108,7 +108,9 @@ func main() {
 	e := echo.New()
 	e.Logger.SetLevel(log.INFO)
 	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "${time_rfc3339} ${status} ${method} ${uri} ${latency_human}\n",
+	}))
 
 	t := &Template{
 		templates: template.Must(template.ParseFS(templateFiles, "templates/*.html")),
