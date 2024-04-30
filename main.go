@@ -55,7 +55,7 @@ func Essay(c echo.Context) error {
 	}
 
 	title := FileNameToTitle(string(fileName))
-	pageTitle := title + " - The Blog Dr. Josh C. Simmons"
+	pageTitle := title + " - DEAD DROP"
 
 	data := PageData{
 		PageTitle: pageTitle,
@@ -75,7 +75,7 @@ func Home(c echo.Context) error {
 	allPosts := "<ul>" + strings.Join(posts, "") + "</ul>"
 
 	data := PageData{
-		PageTitle: "The Blog of Dr. Josh C. Simmons",
+		PageTitle: "DEAD DROP",
 		PageID:    "Home",
 		Heading:   "Essays",
 		Content:   template.HTML(allPosts),
@@ -92,7 +92,7 @@ func About(c echo.Context) error {
 	}
 
 	heading := "About"
-	pageTitle := "About - The Blog Dr. Josh C. Simmons"
+	pageTitle := "About - DEAD DROP"
 
 	data := PageData{
 		PageTitle: pageTitle,
