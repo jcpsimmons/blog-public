@@ -1,27 +1,3 @@
-The **solve** is king. Every action should serve the **solve** whether indirectly or indirectly.
-
-What is a solve and how is it derived?
-
-A solve is not:
-
-- technologies and frameworks
-- process
-- meetings
-  The implementation of the solve includes those things but they are not the solve.
-
-The solve is the answer to the **question** that has the best tradeoffs.
-
-Evaluation of tradeoffs comes with time and social connections. You need to have seen enough tactics fail and succeed in different environments to make projections.
-
-Everything hinges upon these four questions:
-
-- What needs solved?
-- Who will solve it?
-- Why should it be solved?
-- When does it need to be solved by?
-
-Sometimes other questions creep in, they only serve to distract you from the most useful path, it's best to not entertain them. Virtually every team can provide some rough answers for "who" and "when" - if they can't that team is dead in the water. I want to take that for granted and focus on "what" and "why".
-
 ## Good engineers ask "what needs solved?"
 
 You begin your engineering career asking "what needs solved?" The problems begin scoped very small - there is little wiggle-room for possible implementations when you are tasked with fixing a typo on a webpage.
