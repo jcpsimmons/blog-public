@@ -137,7 +137,7 @@ a:visited {
 }
 
 html {
-  font-size: 20px;
+  font-size: 16px;
 }
 
 main {
@@ -147,7 +147,7 @@ main {
 }
 
 main section {
-  max-width: 50ch;
+  max-width: 60ch;
   padding: 1em;
 }
 

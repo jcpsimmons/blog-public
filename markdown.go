@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/russross/blackfriday/v2"
+	"github.com/gomarkdown/markdown"
 )
 
 //go:embed **/*.md
@@ -49,5 +49,6 @@ func GetMarkdown(fileName string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return blackfriday.Run(post), nil
+
+	return markdown.ToHTML(post, nil, nil), nil
 }
