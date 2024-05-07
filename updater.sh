@@ -10,7 +10,7 @@ cd "$SCRIPT_DIR" || exit
 git fetch origin
 
 # Check if the HEAD commit differs from the upstream
-if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
+if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ] || $1; then
     # Log update
     logger -t jcsblogupdater "Updating jcsblog"
     git pull
